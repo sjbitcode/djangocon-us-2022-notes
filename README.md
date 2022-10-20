@@ -1,6 +1,6 @@
 ## Djangocon US 2022 notes
 
-My notes for the following talks:
+
 | Talk name  | Speaker | Djangocon page |
 | ------------- | ------------- | ------------- |
 | Type checking your Django code with django-types and Pyright  | Kyle Bebak  | [🔗](https://2022.djangocon.us/talks/type-checking-your-django-code-with-and/) |

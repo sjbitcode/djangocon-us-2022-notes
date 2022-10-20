@@ -1,0 +1,68 @@
+## Tips and tricks for optimizing Django response times
+### by Carmela Beiro
+---
+
+- profiling
+  - which part of code executed, how much time, SQL executed
+  - catch bottlenecks
+  - examine requests, SQL, profile Python code
+  - tools
+    - django-debug-toolbar
+    - django-silk
+- querysets
+  - querysets are lazy
+    - chain queryset operations and not executed until evaluation
+  - will execute query when need to loop, check length, boolean condition, slicing
+  - order operations can avoid db calls
+  - django caches querysets
+  - sometimes django does not cache querysets
+    - when accessing specific element
+    - slicing operation
+    - both cases are queried but not cached
+  - django provides different ways of doing same operations
+    - perform operations at lowest possible level (python vs db)
+    - ex. `self.recipes` (using Python) or `self.recipes.exists()` (uses db)
+      - db option is better here
+    - if you have to evaluate queryset, do that asap so you can perform python operations afterwards
+      - example:
+        - `.count()` will perform query but not cache it
+        - a for-loop following that will query db again
+        - better to perform `len()` instead of `count()` to cache it first and then do for-loop
+    - fetching related objects
+      - `select_related` works for foreign key relationships
+        - performs join between two related objects resulting in one query
+      - `prefetch_related` works for M2M relationships
+        - performs two queries; one for model A and other for model B related to A
+- indexes
+  - how is the db executing our queries? what queries are being executed?
+  - query optimizer doesn't always pick indices
+  - index has maintenance costs
+    - every time you modify instances related to index, you need to re-run index
+  - index order matters
+    - example:
+      - index created for recipe name, category
+      - query for name or name+category will use index (index scan)
+      - query for category will not use index (sequential scan)
+      - works like a phonebook
+  - partial index
+    - where condition applied every time a query is performed
+  - select required attributes
+    - `Model.objects.values('id', 'name', 'category')`
+      - queryset with dictionaries inside
+    - `Model.objects.only('id', 'name', 'category')`
+      - returns queryset with only these attributes in objects
+    - `Model.objects.defer('active', 'instructions')`
+      - exclude these attributes from queryset objects
+- other options, still need to improve performance!
+  - caching
+  - storing pre-calculated results
+    - celery job that runs and stores results in db or memory (memcache, redis)
+  - returning async results
+    - defer and send email or notification when results done
+  - consider other types of databases
+    - which db performs the best based on the data
+  - links:
+    - [django performance docs](https://docs.djangoproject.com/en/4.1/topics/performance/)
+    - [django debug toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
+    - [django silk](https://github.com/jazzband/django-silk)
+    - [use-the-index-luke](https://use-the-index-luke.com)

@@ -1,10 +1,10 @@
 ## Herding your database queries
 ### by Ilya Bass
 ---
-## Hearding your Database Queries by Ilya Bass
+
 - ORM is awesome
 - Book object, Author FK relation
-  - `book.author` can execute a db query, unless you did something like select_relateed
+  - `book.author` can execute a db query, unless you did something like `select_related`
   - db will cache the result, so no big deal!
   - lots of code spawns lots of queries without realizing
 - sometimes problem is more subtle
@@ -22,7 +22,7 @@
   - `execute_wrapper` 
   - `contextlib.ExitStack`
   - core concept
-    - middleware in __call__
+    - middleware in `__call__`
     - querystats wrapper
     - enter context, accumulate in exit stack
   - querystats
@@ -36,7 +36,7 @@
 - fixing issues
   - `select_related` - related objects via join
   - `prefetch_related` - does separate query for each relationship
-    - *_related will do full lookup for related object, that can have its own overhead
+    - `[select|prefetch]_related` will do full lookup for related object, that can have its own overhead
     - pagination is your friend to reduce db queries 
   - serializers - retrieve data and pass it via context
   - `@cached_property` - persist property in an instance
@@ -49,4 +49,4 @@
   - run-time monitoring
     - middleware logs
     - kibana, smiliar monitors for excessive queries
-- github.com/Path-AI/django-request-stats-example
+- [django-request-stats repo](github.com/Path-AI/django-request-stats-example)

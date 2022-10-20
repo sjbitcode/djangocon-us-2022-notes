@@ -1,0 +1,85 @@
+## Just enough ops for developers
+### by Peter Baumgartner
+---
+
+- PaaS are really good
+  - don't get droplet
+  - Heroku, fly.io, Render offer good solutions
+  - forget about hardening, security, deployments, secrets management
+- disk (HDD, SSD) persistent file storage
+  - disk is slow
+  - ephemeral between deploys
+- CPUs
+  - more users (concurrent users) -> more CPU
+  - cooks, waiter, customer example -> (CPU, processes, requests)
+  - pricier things
+  - minimize cost by maximizing CPU usage
+    - multiple processes per CPU
+      - in reality, one request going to be waiting
+      - CPU not always doing work when process is executed
+      - gunicorn multipe workers for multiple processes
+      - processes - double CPU count
+      - too man workers - run out of memory, performance degrade -> load test!
+    - improve app performance
+    - I/O
+      - read/write files, db, network calls
+      - synchronous I/O is blocking
+      - async I/O -- its hard
+    - gevent
+      - goes thru sync program and monkey patch places where you have network, and turns it async
+      - python processes can spawn greenlets/threads/coroutine
+      - `gunicorn --worker-class=gevent --worker-connections=50 ...`
+    - use more CPU
+- Memory (RAM) ephemeral cache
+  - "warm" code cache, python objects, open connections
+  - really fast but limited
+  - pricy, use as little to save costs
+  - typical memory bw 128-512M per process
+  - if exceeded, app will halt (OOM)
+    - increase memory
+    - reduce processes/workers
+  - Django memory tips
+    - don't read huge files into memory (str/bytes object)
+    - don't process a huge queryset
+      - `Model.objects.iterator()`
+      - use `.values()` to avoid creating a model instance
+      - use `.only()` to avoid loading large text fields
+  - Memory leak causes
+    - Python has garbage collection (good!)
+    - leaving file descriptors/network sockets open (use context managers!)
+    - global objects
+    - `gunicorn --max-requests=1000 --max-requests-jitter=500`, reload app after X number of requests
+- Databases
+  - db server will hit CPU
+  - db should fit in RAM (rule of thumb)
+    - disk is slow
+  - db services will have db server tuning out of the box
+- Scaling
+  - more CPUs
+  - horizontal: more instances
+  - vertical: one instance, more resources
+  - autoscaling
+    - for predictable peaks, based on CPU usage
+    - schedule scaling events
+    - run at peak capacity
+- Serverless
+  - totally different paradigm than PaaS
+  - back to 1 request -> 1 process -> 1 CPU
+  - pricing is per request + resources per ms of response time
+  - don't think about scaling, CPU allocation, app server
+  - worry about costs, cold starts, db connections, limitations, remote shell access
+- Final thoughts
+  - know your application
+    - CPU & Memory usage, set up periodic alerts
+    - Response times
+      - remember the users who are experiencing max response times!
+    - error rates/uptime
+      - for every good request are there any errors?
+      - how much percentage of responses are errors? 0.25% or 20%?
+- Q&A
+  - load tests
+    - [Hey](https://github.com/rakyll/hey), [`ab` Apache bench](https://httpd.apache.org/docs/2.4/programs/ab.html), [locust](https://locust.io/)
+  - monitoring
+    - Sentry (host on your own or with them)
+    - stuff that goes in monitoring is when request completes
+      - error reporting system might never see those

@@ -1,0 +1,50 @@
+## Type checking your Django code with django-types and Pyright
+### by Kyle Bebak
+---
+
+- Python type hints
+  - added in py3.5
+  - newer libs built with types
+  - older libs like Django, types added as stubs
+    - stubs are files separate from code
+    - don't have to be bundled with library
+    - nice because they can be maintained separately
+  - using type hints is a tradeoff
+    - more work upfront
+    - helps correctness, documentation, IDE features, etc
+- Django type hints
+  - doesn't have inline type hints in source code
+    - they are a barrier for new contributors
+    - "type stubs" libs maintained by community
+    - some things are difficult to type hint
+  - Django type hint libraries:
+    - [django-stubs](https://github.com/typeddjango/django-stubs)
+    - [django-types](https://github.com/sbdchd/django-types)
+      - is a fork of django-stubs
+  - Type checkers
+    - mypy (maintained by Dropbox)
+    - pyright (Microsoft)
+    - pyre (Facebook)
+    - pytype (Google)
+  - Which type checker should you use?
+    - pyright is not only type checker but also a language server
+      - LSP (Language Server)
+      - quality of codebase and tool is really good!
+    - can be used with django-types
+    - django-stubs is mypy only
+      - syntax not compatible with standard plugins
+      - django-types is fork of django-stubs with mypy stuff removed
+- Type hints requirement
+  - Install type stubs
+    - [django-types](https://github.com/sbdchd/django-types), [djangorestframework-types](https://github.com/sbdchd/djangorestframework-types)
+  - Install pyright
+    - enable in text editor
+    - configure `pyrightconfig.json`
+    - point to correct virtualenv
+  - Python 3.8+ has better type hint syntax
+    - `from __future__ import annotations` to use higher version syntax
+    - `list` instead of `List`, `|` for unions, etc
+- Code demo
+  - `pyrightconfig.json` has a bunch of configurations
+  - going to add types to an existing project
+  - 

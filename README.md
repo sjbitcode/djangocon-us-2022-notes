@@ -8,3 +8,4 @@
 | [Herding your database queries](notes/herding-your-database-queries.md) | Ilya Bass | [🔗](https://2022.djangocon.us/talks/herding-your-database-queries-diagnosing/) |
 | [Tips and tricks for optimizing Django response times](notes/tips-and-tricks-for-optimizing-django-response-times.md) | Carmela Beiro | [🔗](https://2022.djangocon.us/talks/tips-and-tricks-for-optimizing-django/) |
 | [Just enough ops for developers](notes/just-enough-ops-for-developers.md) | Peter Baumgartner | [🔗](https://2022.djangocon.us/talks/just-enough-ops-for-developers/) |
+| [Django Logging Demystified](notes/django-logging-demystified.md) | Lee Trout | [🔗](https://2022.djangocon.us/talks/django-logging-demystified/) |

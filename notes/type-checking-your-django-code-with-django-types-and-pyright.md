@@ -2,6 +2,8 @@
 ### by Kyle Bebak
 ---
 
+[Talk repo with demo code](https://github.com/kylebebak/djangocon_2022-django-types-pyright)
+
 - Python type hints
   - added in py3.5
   - newer libs built with types
@@ -40,11 +42,42 @@
   - Install pyright
     - enable in text editor
     - configure `pyrightconfig.json`
-    - point to correct virtualenv
+    - point to correct virtualenv (`venvPath` and `venv`)
   - Python 3.8+ has better type hint syntax
     - `from __future__ import annotations` to use higher version syntax
     - `list` instead of `List`, `|` for unions, etc
 - Code demo
   - `pyrightconfig.json` has a bunch of configurations
   - going to add types to an existing project
-  - 
+  - Where to focus:
+    - Models:
+      - Foreign key _id fields (not explicitly declared, they're added by Django)
+      - Reverse foreign key managers
+      - Many to many fields
+      - Special cases ex. choices
+    - Views:
+      - not as much to worry about
+      - create custom request class, change user attribute to point to custom User model
+        - `request: UserRequest`
+    - Work around/ignore:
+      - `cast` or `# type ignore`
+- Model Examples:
+  - [code here](https://github.com/kylebebak/djangocon_2022-django-types-pyright/blob/main/app/models.py)
+  - Post model has foreign key to User
+    - Post model: `user_id: int`
+    - User model reverse foreign key manager: `posts: Manager[Post]`
+  - Thread model has many-to-many field with User, through table UserThread
+    - Thread model: `users: models.ManyToManyField[User, UserThread]`
+    - User model: threads: models.ManyToManyField[Thread, UserThread]
+  - Thead model has nullable foreign key to User (field called moderator)
+    - Thread model: `moderator_id: int | None`
+    - User model: `moderated_threads: Manager[Thread]`
+- View Examples:
+  - [code here](https://github.com/kylebebak/djangocon_2022-django-types-pyright/blob/main/app/views.py)
+  - Define custom request class `class UserRequest(Request): user: User`
+    - `self.request.user` in your views has autocompletion for custom User model instead of AnonymousUser or base user
+  - type hints from models help us out here
+- Closing notes
+  - type hints are great and really helpful in larger projects
+  - there's an open issue in django-stubs to be compatible with pyright
+  - it would be nice if Django had type hints
